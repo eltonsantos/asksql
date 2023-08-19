@@ -8,12 +8,16 @@ import { highlight, languages } from 'prismjs'
 import 'prismjs/components/prism-sql'
 import 'prismjs/themes/prism-dark.css'
 import { useState } from 'react'
-
+import { useCompletion } from 'ai/react'
 export default function Home() {
-  const [code, setCode] = useState('')
-  const [question, setQuestion] = useState('')
+  const [schema, setSchema] = useState('');
 
-  const result = ''
+  const { completion, handleSubmit, input, handleInputChange } = useCompletion({
+    api: 'api/completion',
+    body: {
+      schema
+    },
+  })
 
   return (
     <div className='max-w-[430px] mx-auto px-4 pt-12 pb-4'>
@@ -39,8 +43,8 @@ export default function Home() {
 
         <Editor
           textareaId="schema"
-          value={code}
-          onValueChange={code => setCode(code)}
+          value={schema}
+          onValueChange={code => setSchema(code)}
           highlight={code => highlight(code, languages.sql, 'sql')}
           padding={16}
           textareaClassName='outline-none'
@@ -51,8 +55,8 @@ export default function Home() {
         <textarea
           name="question"
           id="question"
-          value={question}
-          onChange={e => setQuestion(e.target.value)}
+          value={input}
+          onChange={handleInputChange}
           className='my-4 bg-blueberry-600 border border-blueberry-300 rounded-md px-4 py-3 outline-none focus:ring-1 focus:ring-lime-600'
         />
 
@@ -67,7 +71,7 @@ export default function Home() {
       
         <Editor
           readOnly
-          value={result}
+          value={completion}
           onValueChange={() => {}}
           highlight={code => highlight(code, languages.sql, 'sql')}
           padding={16}
